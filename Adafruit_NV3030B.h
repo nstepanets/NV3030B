@@ -27,55 +27,58 @@
 #include <Adafruit_SPITFT_Macros.h>
 #include <SPI.h>
 
-#define NV3030B_TFTWIDTH 240  ///< Display width in pixels
-#define NV3030B_TFTHEIGHT 320 ///< Display height in pixels
+#define NV3030B_TFTWIDTH 240  // Display width in pixels
+#define NV3030B_TFTHEIGHT 320 // Display height in pixels
 
-#define NV3030B_NOP 0x00     ///< No-op register
+#define NV3030B_NOP     0x00 // No-op register
+#define NV3030B_SWRESET 0x01 // Software reset (from NV3030A datasheet)
 
-#define NV3030B_RDDID 0x04   ///< Read display identification information
-#define NV3030B_RDDST 0x09   ///< Read Display Status
+#define NV3030B_RDDID 0x04   // Read display identification information
+#define NV3030B_RDDST 0x09   // Read Display Status
 
-#define NV3030B_SLPIN 0x10  ///< Enter Sleep Mode
-#define NV3030B_SLPOUT 0x11 ///< Sleep Out
-#define NV3030B_PTLON 0x12  ///< Partial Mode ON
-#define NV3030B_NORON 0x13  ///< Normal Display Mode ON and Partial Mode OFF
+#define NV3030B_SLPIN 0x10  // Enter Sleep Mode
+#define NV3030B_SLPOUT 0x11 // Sleep Out
+#define NV3030B_PTLON 0x12  // Partial Mode ON
+#define NV3030B_NORON 0x13  // Normal Display Mode ON and Partial Mode OFF
 
-#define NV3030B_RDMODE 0x0A     ///< Read Display Power Mode
-#define NV3030B_RDMADCTL 0x0B   ///< Read Display MADCTL
-#define NV3030B_RDPIXFMT 0x0C   ///< Read Display Pixel Format
-#define NV3030B_RDIMGMODE 0x0D  ///< Read Display Image Mode
-// 0x0E = Read display Signal mode
-#define NV3030B_RDSELFDIAG 0x0F ///< Read Display Self-Diagnostic Result
+#define NV3030B_RDMODE 0x0A     // Read Display Power Mode
+#define NV3030B_RDMADCTL 0x0B   // Read Display MADCTL
+#define NV3030B_RDPIXFMT 0x0C   // Read Display Pixel Format
+#define NV3030B_RDIMGMODE 0x0D  // Read Display Image Mode
+#define NV3030B_RDSIGNMODE 0x0E // Read Display Signal mode
+#define NV3030B_RDSELFDIAG 0x0F // Read Display Self-Diagnostic Result
 
-#define NV3030B_INVOFF 0x20   ///< Display Inversion OFF
-#define NV3030B_INVON 0x21    ///< Display Inversion ON
-#define NV3030B_DISPOFF 0x28  ///< Display OFF
-#define NV3030B_DISPON 0x29   ///< Display ON
+#define NV3030B_INVOFF 0x20   // Display Inversion OFF
+#define NV3030B_INVON 0x21    // Display Inversion ON
+#define NV3030B_DISPOFF 0x28  // Display OFF
+#define NV3030B_DISPON 0x29   // Display ON
 
-#define NV3030B_CASET 0x2A ///< Column Address Set
-#define NV3030B_PASET 0x2B ///< Page Address Set
-#define NV3030B_RAMWR 0x2C ///< Memory Write
+#define NV3030B_CASET 0x2A // Column Address Set
+#define NV3030B_PASET 0x2B // Page Address Set
+#define NV3030B_RAMWR 0x2C // Memory Write
+#define NV3030B_RAMRD 0x2E // Memory Read (from NV3030A datasheet)
 
-#define NV3030B_PTLAR 0x30    ///< Partial Area
-#define NV3030B_VSCRDEF 0x33  ///< Vertical Scrolling Definition
-#define NV3030B_TEOFF 0x34    ///< Tearing effect line off
-#define NV3030B_TEON 0x35     ///< Tearing effect line on
-#define NV3030B_MADCTL 0x36   ///< Memory Access Control
-#define NV3030B_VSCRSADD 0x37 ///< Vertical Scrolling Start Address
-#define NV3030B_IDLEOFF 0x38  ///< Idle mode off
-#define NV3030B_IDLEON 0x39   ///< Idle mode on and other mode off
+#define NV3030B_PTLAR 0x30    // Partial Area
+#define NV3030B_VSCRDEF 0x33  // Vertical Scrolling Definition
+#define NV3030B_TEOFF 0x34    // Tearing effect line off
+#define NV3030B_TEON 0x35     // Tearing effect line on
+#define NV3030B_MADCTL 0x36   // Memory Access Control
+#define NV3030B_VSCRSADD 0x37 // Vertical Scrolling Start Address
+#define NV3030B_IDLEOFF 0x38  // Idle mode off
+#define NV3030B_IDLEON 0x39   // Idle mode on and other mode off
 
-#define NV3030B_PIXFMT 0x3A   ///< Interface Pixel Format
-// 0x3C = Write memory continue
-// 0x44 = Set tear scanline
-// 0x45 = Get tear scanline
-// 0x53 = Write display brightness
-// 0x54 = Read display brightness
+#define NV3030B_PIXFMT 0x3A    // Interface Pixel Format
+#define NV3030B_RAMWRCNT 0x3C  // Write memory continue
+#define NV3030B_RAMRDCNT 0x3E  // Read memory continue (from NV3030A datasheet)
+#define NV3030B_TESCANSET 0x44 // Set tear scanline
+#define NV3030B_TESCANGET 0x45 // Get tear scanline
+#define NV3030B_WRDISBV 0x53   // Write display brightness (NV3030B only)
+#define NV3030B_RDDISBV 0x54   // Read display brightness (NV3030B only)
 
-// 0xD3 = read idd3
-#define NV3030B_RDID1 0xDA ///< Read ID 1
-#define NV3030B_RDID2 0xDB ///< Read ID 2
-#define NV3030B_RDID3 0xDC ///< Read ID 3
+#define NV3030B_RDIDD3 0xD3 // Read idd3
+#define NV3030B_RDID1 0xDA  // Read ID 1
+#define NV3030B_RDID2 0xDB  // Read ID 2
+#define NV3030B_RDID3 0xDC  // Read ID 3
 
 // Color definitions
 #define NV3030B_BLACK 0x0000       ///<   0,   0,   0
